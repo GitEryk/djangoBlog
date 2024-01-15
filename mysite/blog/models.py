@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 
+# robimy własnego managera do QuerySet, pokzuje tylko opublikowane posty
 class PublishedManager(models.Manager):
     def get_queryset(self):
         # tworzymy kolekcje queryset metoda get + filtr
@@ -29,6 +30,7 @@ class Post(models.Model):
     # tworzymy niestanadrowy manager (obiekt klasy) do filtrowania po statusie
     published = PublishedManager()
 
+    # indexujemy posty od końca i tylko opublikowane
     class Meta:
         ordering = ['-publish']
         indexes = [
@@ -38,6 +40,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    # dynamiczny adres url, zmieniamy go tutaj a w templatach wywołujemy zamiast pisać na sztywno
     def get_absolute_url(self):
         return reverse("blog:post_detail",
                        args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
