@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
+from taggit.models import Tag
 
 
 @require_POST
@@ -47,11 +48,14 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
-'''
 # ten plik obsługuje urls, jak mają się zachowywałać co zwracać
-def post_list(request):
-    post_list = Post.published.all()
-    paginator = Paginator(post_list, 3)
+def post_list(request, tag_slug=None):
+    post_List = Post.published.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        post_List = post_List.filter(tags__in=[tag])
+    paginator = Paginator(post_List, 3)
     page_number = request.GET.get("page", 1)
     try:
         posts = paginator.page(page_number)
@@ -59,8 +63,7 @@ def post_list(request):
         posts = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         posts = paginator.page(1)
-    return render(request, "blog/post/list.html", {"posts": posts})
-'''
+    return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})
 
 
 def post_detail(request, year, month, day, post):

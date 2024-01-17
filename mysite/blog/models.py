@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 
 # robimy własnego managera do QuerySet, pokzuje tylko opublikowane posty
@@ -29,6 +30,7 @@ class Post(models.Model):
     object = models.Manager()
     # tworzymy niestanadrowy manager (obiekt klasy) do filtrowania po statusie
     published = PublishedManager()
+    tags = TaggableManager()
 
     # indexujemy posty od końca i tylko opublikowane
     class Meta:
