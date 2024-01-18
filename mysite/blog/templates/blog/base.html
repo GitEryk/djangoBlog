@@ -1,3 +1,4 @@
+{% load blog_tags %}
 {% load static %}
 {{ '<' }}{{ '!DOCTYPE html>' }}
 <html>
@@ -12,7 +13,9 @@
 </div>
 <div id="sidebar">
     <h2>Mój pierwszy blog</h2>
-    <p>To jest mój pierwszy blog.</p>
+    <p>To jest mój pierwszy blog.
+    Ilość wszystkich postów: {% total_posts %}
+    </p>
 </div>
 </body>
 </html>
