@@ -16,6 +16,9 @@
     <p>To jest mój pierwszy blog.
     Ilość wszystkich postów: {% total_posts %}
     </p>
+    <p>
+        <a href='{% url "blog:post_feed" %}'> Subskrybuj mój kaał RSS</a>
+    </p>
     <h3>Najnowsze posty:</h3>
     {% show_latest_posts 5 %}
     <h3>Najczęściej komentowane posty</h3>
