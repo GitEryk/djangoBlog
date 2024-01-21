@@ -1,8 +1,0 @@
-node_modules
-dist/*.js
-dist/*.js.map
-dist/*.html
-bin/*
-.DS_Store
-*.provisionprofile
-*.lock
