@@ -1,4 +1,4 @@
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
@@ -91,13 +91,19 @@ def post_search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
+            '''
+            # wyszukiwanie zaawansowane za pomocą wag oraz steammingu i rankingu
             # stwórz stoplite po polsku do postgresa
             search_vector = (SearchVector("title", weight='A', config="english") +
                              SearchVector("body", weight='B', config="english"))
 
             search_query = SearchQuery(query, config="english")
-            results = (Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))
-                       .filter(rank__qte=0.3).order_by("-rank"))
+            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)
+                       ).filter(rank__gte=0.3).order_by("-rank")
+            '''
+            # wyszukiwanie trygram (dopuszcza literówki)
+            results = Post.published.annotate(similarity=TrigramSimilarity("title", query)
+                                              ).filter(similarity__gt=0.1).order_by("-similarity")
 
     return render(request, 'blog/post/search.html',
                   {"form": form, "query": query, "results": results})
