@@ -6,19 +6,25 @@ import markdown
 
 register = template.Library()
 
+
 @register.simple_tag
 def total_posts():
     return Post.published.count()
+@register.inclusion_tag("blog/post/tag_bar.html")
+def get_all_tags():
+    tags = Post.tags.all().values_list("name", flat=True)
+    return {"tags": tags}
 
 @register.inclusion_tag("blog/post/latest_posts.html")
 def show_latest_posts(count=5):
     latest_posts = Post.published.order_by("-publish")[:count]
-    return {"latest_posts" : latest_posts}
+    return {"latest_posts": latest_posts}
 
-@register.simple_tag
-def get_most_commented_posts(count=5):
-    return Post.published.annotate(total_comments=Count("comments")
+@register.inclusion_tag("blog/post/comments_posts.html")
+def show_comments_posts(count=5):
+    comments_posts = Post.published.annotate(total_comments=Count("comments")
                                    ).order_by("-total_comments")[:count]
+    return {"comments_posts":  comments_posts}
 
 @register.filter(name="markdown")
 def markdown_format(text):

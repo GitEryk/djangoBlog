@@ -1,0 +1,4 @@
+{% for tag in tags %}
+    <a href="{% url 'blog:post_list_by_tag' tag_name=tag %}">{{ tag }}</a>
+    {% if not forloop.last %}, {% endif %}
+{% endfor %}
